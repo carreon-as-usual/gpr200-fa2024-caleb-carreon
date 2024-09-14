@@ -18,31 +18,6 @@ float vertices[] = {
 	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 };
 
-const char* vertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aColor;
-out vec4 Color; // Varying
-uniform float uTime;
-void main() 
-{
-	Color = aColor; // Pass-through
-	float yPos = aPos.y * sin(uTime);
-	gl_Position = vec4(aPos.x, yPos, aPos.z, 1.0f);
-}
-)";
-
-const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-in vec4 Color;
-uniform float uTime;
-void main()
-{
-	FragColor = Color * sin(uTime) * 0.5 + 0.5;
-}
-)";
-
 ccarreon::Shader shader;
 
 int main() {
@@ -80,53 +55,13 @@ int main() {
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
 
-	// Create vertex shader
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	ccarreon::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
-	// Check if vertex shader failed
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	while (!glfwWindowShouldClose(window)) {
+		shader.use();
+		shader.setFloat("uTime", 1.0f);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
-
-	// Create fragment shader
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// Check if fragment shader failed
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Create shader program
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	// Check if shader program failed
-	glGetProgramiv(shaderProgram, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Use shader program and delete intermediate shaders once linked
-	glUseProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -136,17 +71,15 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		//Drawing happens here!
-		glUseProgram(shaderProgram);
+		shader.use();
 
 		// Set time uniform
-		int timeLoc = glGetUniformLocation(shaderProgram, "uTime");
-		glUniform1f(timeLoc, time);
+		shader.setFloat("uTime", 1.0f);
 
 		glBindVertexArray(VAO);
 
 		//Draw call
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-
 
 		glfwSwapBuffers(window);
 	}
