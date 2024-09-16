@@ -4,5 +4,5 @@ in vec4 Color;
 uniform float uTime;
 void main()
 {
-	FragColor = Color * sin(uTime) * 0.5 + 0.5;
+	FragColor = Color * sin(uTime) * 0.5;
 }

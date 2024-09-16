@@ -13,12 +13,10 @@ const int SCREEN_HEIGHT = 720;
 
 float vertices[] = {
 	// X     Y     Z     R      G     B    A
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
+	-0.5f, -0.5f, 0.0f, 1.0f, 0.5f, 0.0f, 1.0f,
+	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f,
+	 0.0f,  0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f
 };
-
-ccarreon::Shader shader;
 
 int main() {
 	printf("Initializing...");
@@ -57,12 +55,6 @@ int main() {
 
 	ccarreon::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
-	while (!glfwWindowShouldClose(window)) {
-		shader.use();
-		shader.setFloat("uTime", 1.0f);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-	}
-
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -74,7 +66,7 @@ int main() {
 		shader.use();
 
 		// Set time uniform
-		shader.setFloat("uTime", 1.0f);
+		shader.setFloat("uTime", time);
 
 		glBindVertexArray(VAO);
 
