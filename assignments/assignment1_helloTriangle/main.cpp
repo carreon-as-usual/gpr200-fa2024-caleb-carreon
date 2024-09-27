@@ -12,10 +12,11 @@ const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
 float vertices[] = {
-	// X     Y     Z     R      G     B    A
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f,
-	 0.0f,  0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f
+       // X Y Z                              RGBA                        UV
+    0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // top right
+    0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 0.0f,   // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f, 1.0f    // top left
 };
 
 int main() {
@@ -52,6 +53,9 @@ int main() {
 	//COLOR (RGBA)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
+
+    //TEXTURE (UV)
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(sizeof(float) * 3));
 
 	ccarreon::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
