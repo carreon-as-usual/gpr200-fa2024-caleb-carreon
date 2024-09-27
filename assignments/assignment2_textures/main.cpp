@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
@@ -6,8 +8,8 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <ccarreon/shader.h>
-#include <ew/external/stb_image.cpp>
+#include "ccarreon/shader.h"
+#include "ccarreon/texture2d.h"
 
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
@@ -69,29 +71,9 @@ int main() {
 	glEnableVertexAttribArray(2);
 
 	ccarreon::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	ccarreon::Texture2D texture("assets/frog.png", GL_NEAREST, GL_REPEAT);
 
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load("assets/frog.png", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
+	texture.Bind();
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {

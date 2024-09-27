@@ -4,13 +4,13 @@ layout (location = 1) in vec4 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
 out vec4 Color; // Varying
-out vec2 TexCoord;
+out vec2 TexCoords;
 
 uniform float uTime;
 
 void main() 
 {
 	Color = aColor; // Pass-through
-	TexCoord = aTexCoord;
+	TexCoords = aTexCoord;
 	gl_Position = vec4(aPos, 1.0);
 }
