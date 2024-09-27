@@ -3,14 +3,13 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
-#include "../ew/external/glad.h"
-#include "../ew/external/stb_image.cpp"
-
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
+#include "../ew/external/glad.h"
+#include "../ew/external/stb_image.h"
 
 namespace ccarreon {
     class Texture2D {
