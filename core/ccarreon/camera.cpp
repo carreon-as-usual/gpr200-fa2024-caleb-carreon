@@ -75,7 +75,10 @@ void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 void Camera::use(GLFWwindow* window) {
 	processInput(window);
-
+	/*The author generated this text in part with GPT-3, OpenAI’s large-scale language-generation
+	model using the following prompt: "Help me refactor this use function". Upon generating draft language, the
+	author reviewed, edited, and revised the language to their own liking and takes ultimate
+	responsibility for this content.*/
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
 		Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
 		camera->mouse_callback(window, xpos, ypos);
