@@ -23,7 +23,6 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
-
 float boxVertices[] = {
 	-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,      0.0f,  0.0f, -1.0f,
 	 0.5f, -0.5f, -0.5f,	1.0f, 0.0f,      0.0f,  0.0f, -1.0f,
@@ -174,10 +173,9 @@ int main() {
 
 		//Settings window
 		ImGui::Begin("Settings");
-		ImGui::Text("Add Controls Here!");
-		//ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
-		//ImGui::ColorEdit3("Light Color", &lightColor.r);
-		//ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
+		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &lightColor.r);
+		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
 		ImGui::End();
 
 		//ImGui render
