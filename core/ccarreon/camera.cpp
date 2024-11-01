@@ -37,35 +37,44 @@ void Camera::processInput(GLFWwindow* window)
 		perspective = !perspective; // Toggle perspective or orthographic
 	}
 	tabHeld = glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS;
+	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		firstMouse = true;
+	}
 }
 void Camera::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	//Check if first mouse call
-	if (firstMouse) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+		//Check if first mouse call
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+		// Get change in mouse position
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+		// Multiply offset by sensitivity
+		float sensitivity = 0.1f;
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+		// Change rotation angles
+		yaw += xoffset;
+		pitch += yoffset;
+		// Make sure that you can't look up too far up or down
+		if (pitch > 89.0f) pitch = 89.0f;
+		if (pitch < -89.0f) pitch = -89.0f;
+		// Change camera look direction
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		direction.y = sin(glm::radians(pitch));
+		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		cameraFront = glm::normalize(direction);
 	}
-	// Get change in mouse position
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-	// Multiply offset by sensitivity
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-	// Change rotation angles
-	yaw += xoffset;
-	pitch += yoffset;
-	// Make sure that you can't look up too far up or down
-	if (pitch > 89.0f) pitch = 89.0f;
-	if (pitch < -89.0f) pitch = -89.0f;
-	// Change camera look direction
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
 }
 void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {\
 	// Get scroll
@@ -105,4 +114,7 @@ void Camera::timeChange(float currentFrame) {
 	// Change the time
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+}
+glm::vec3 Camera::getPosition() {
+	return cameraPos;
 }

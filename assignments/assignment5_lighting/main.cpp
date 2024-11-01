@@ -7,9 +7,14 @@
 #include <math.h>
 #include <iostream>
 #include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include "ccarreon/shader.h"
 #include "ccarreon/texture2d.h"
@@ -20,47 +25,47 @@ const int SCREEN_HEIGHT = 600;
 
 
 float boxVertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,      0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,	1.0f, 0.0f,      0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,      0.0f,  0.0f, -1.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,      0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,      0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,	0.0f, 1.0f,      0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,	1.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      1.0f,  0.0f,  0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,	1.0f, 1.0f,      0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      0.0f, -1.0f,  0.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  1.0f,  0.0f
 };
 glm::vec3 cubePositions[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
@@ -78,6 +83,9 @@ unsigned int indices[] = {
 	0, 1, 3,
 	1, 2, 3  
 };
+glm::vec3 lightPos(0.0f, 5.0f, -5.0f);
+glm::vec3 lightColor(1.0f, 0.0f, 0.0f);
+float ambientStrength = 0.1f;
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -95,6 +103,11 @@ int main() {
 		return 1;
 	}
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init();
+
 	//Initialization goes here!
 	unsigned int VAO, VBO, EBO;
 
@@ -102,6 +115,14 @@ int main() {
 	glBindVertexArray(VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
+
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//LIGHT POSITION (XYZ)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
@@ -111,12 +132,16 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//POSITION (XYZ)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//TEXTURE (UV)
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
+
+	//NORMALS (XYZ)
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 5));
+	glEnableVertexAttribArray(2);
 
 	ccarreon::Shader boxShader("assets/boxVertexShader.vert", "assets/boxFragmentShader.frag");
 	ccarreon::Texture2D boxTexture("assets/container.jpg", GL_LINEAR, GL_REPEAT);
@@ -142,6 +167,23 @@ int main() {
 		glfwPollEvents();
 		float time = (float)glfwGetTime();
 
+		//ImGUI start
+		ImGui_ImplGlfw_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
+
+		//Settings window
+		ImGui::Begin("Settings");
+		ImGui::Text("Add Controls Here!");
+		//ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
+		//ImGui::ColorEdit3("Light Color", &lightColor.r);
+		//ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
+		ImGui::End();
+
+		//ImGui render
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		//Get user input
 		camera.use(window);
 
@@ -149,19 +191,27 @@ int main() {
 		camera.projectionSwap(projection);
 
 		// Clear framebuffer
-		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Set uniforms
 		boxShader.setFloat("uTime", time);
+		boxShader.setFloat("ambientStrength", ambientStrength);
+		boxShader.setVec3("viewPos", camera.getPosition());
+		boxShader.setVec3("lightPos", lightPos);
+		boxShader.setVec3("lightColor", lightColor);
+		boxShader.setBool("override", false);
 
 		// Bind textures
 		boxTexture.Bind(0);
 		faceTexture.Bind(1);
 
-		//VIEW
+		// View
 		glm::mat4 view = glm::mat4(1.0f);
 		camera.viewLookAt(view);
+
+		// Lighting
+		float specularStrength = 0.5;
 
 		//Send matrices to shader
 		unsigned int viewLoc = glGetUniformLocation(boxShader.ID, "view");
@@ -185,9 +235,22 @@ int main() {
 			model = glm::rotate(model, (float)glfwGetTime() + glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			unsigned int modelLoc = glGetUniformLocation(boxShader.ID, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		// Make Light Cube
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		unsigned int modelLoc = glGetUniformLocation(boxShader.ID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(lightModel));
+
+		// Make light cube override color settings
+		boxShader.setBool("override", true);
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		// Swap buffers
 		glfwSwapBuffers(window);
 	}

@@ -25,6 +25,7 @@ namespace ccarreon {
 		void projectionSwap(glm::mat4& projection);
 		void viewLookAt(glm::mat4& view);
 		void timeChange(float currentFrame);
+		glm::vec3 getPosition();
 	private:
 		//Camera
 		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
