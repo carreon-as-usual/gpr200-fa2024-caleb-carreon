@@ -10,6 +10,7 @@ uniform sampler2D texture2;
 uniform float textureMix;
 uniform float uTime;
 uniform float ambientStrength;
+uniform float diffuseStrength;
 uniform float specularStrength;
 uniform int shininess;
 uniform vec3 lightColor;
@@ -39,7 +40,7 @@ void main()
 
         // Diffuse lighting
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
+        vec3 diffuse = diffuseStrength * diff * lightColor;
 
         // View position
         float spec = pow(max(dot(viewDir, halfwayDir), 0.0), shininess);

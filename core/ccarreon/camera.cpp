@@ -26,11 +26,12 @@ void Camera::processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	}
+	//Joseph Isaacs helped me make the Q and E relative
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		cameraPos += cameraSpeed * cameraUp;
+		cameraPos += glm::normalize(glm::cross(glm::cross(cameraFront, cameraUp), cameraFront)) * cameraSpeed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		cameraPos -= cameraSpeed * cameraUp;
+		cameraPos -= glm::normalize(glm::cross(glm::cross(cameraFront, cameraUp), cameraFront)) * cameraSpeed;
 	}
 	//https://stackoverflow.com/questions/52492426/glfw-switching-boolean-toggle
 	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS && !tabHeld) {

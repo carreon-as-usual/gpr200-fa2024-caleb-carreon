@@ -86,6 +86,7 @@ glm::vec3 lightPos(0.0f, 5.0f, -5.0f);
 glm::vec3 lightColor(1.0f, 0.0f, 0.0f);
 float textureMix = 0.2f;
 float ambientStrength = 0.1f;
+float diffuseStrength = 1.0f;
 float specularStrength = 0.5f;
 int shininess = 32;
 int main() {
@@ -178,9 +179,10 @@ int main() {
 		ImGui::Begin("Settings");
 		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
 		ImGui::ColorEdit3("Light Color", &lightColor.r);
-		ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
-		ImGui::SliderInt("Shininess", &shininess, 1,100);
+		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &diffuseStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &specularStrength, 0.0f, 1.0f);
+		ImGui::SliderInt("Shininess", &shininess, 2,1024);
 		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
 		ImGui::End();
 
@@ -198,6 +200,7 @@ int main() {
 		boxShader.setFloat("uTime", time);
 		boxShader.setFloat("textureMix", textureMix);
 		boxShader.setFloat("ambientStrength", ambientStrength);
+		boxShader.setFloat("diffuseStrength", diffuseStrength);
 		boxShader.setFloat("specularStrength", specularStrength);
 		boxShader.setInt("shininess", shininess);
 		boxShader.setVec3("viewPos", camera.getPosition());
