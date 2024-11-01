@@ -84,7 +84,10 @@ unsigned int indices[] = {
 };
 glm::vec3 lightPos(0.0f, 5.0f, -5.0f);
 glm::vec3 lightColor(1.0f, 0.0f, 0.0f);
+float textureMix = 0.2f;
 float ambientStrength = 0.1f;
+float specularStrength = 0.5f;
+int shininess = 32;
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -175,12 +178,11 @@ int main() {
 		ImGui::Begin("Settings");
 		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
 		ImGui::ColorEdit3("Light Color", &lightColor.r);
-		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
+		ImGui::SliderInt("Shininess", &shininess, 1,100);
+		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
 		ImGui::End();
-
-		//ImGui render
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		//Get user input
 		camera.use(window);
@@ -194,7 +196,10 @@ int main() {
 
 		// Set uniforms
 		boxShader.setFloat("uTime", time);
+		boxShader.setFloat("textureMix", textureMix);
 		boxShader.setFloat("ambientStrength", ambientStrength);
+		boxShader.setFloat("specularStrength", specularStrength);
+		boxShader.setInt("shininess", shininess);
 		boxShader.setVec3("viewPos", camera.getPosition());
 		boxShader.setVec3("lightPos", lightPos);
 		boxShader.setVec3("lightColor", lightColor);
@@ -248,6 +253,10 @@ int main() {
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//ImGui render
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// Swap buffers
 		glfwSwapBuffers(window);

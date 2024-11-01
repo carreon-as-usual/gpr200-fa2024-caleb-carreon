@@ -7,15 +7,16 @@ in vec3 FragPos;
 
 uniform sampler2D texture1;
 uniform sampler2D texture2;
+uniform float textureMix;
 uniform float uTime;
 uniform float ambientStrength;
+uniform float specularStrength;
+uniform int shininess;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform bool override;
 
-float specularStrength = 0.5;
-int shininess = 32;
 
 void main()
 {
@@ -28,7 +29,7 @@ void main()
         vec3 halfwayDir = normalize(lightDir + viewDir);
 
         // Mix textures into objectColor
-        vec3 objectColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2).rgb;
+        vec3 objectColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), textureMix).rgb;
 
         // Ambient lighting
         vec3 ambient = ambientStrength * lightColor;
