@@ -76,6 +76,7 @@ void Camera::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		cameraFront = glm::normalize(direction);
 	}
+	ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
 }
 void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {\
 	// Get scroll
